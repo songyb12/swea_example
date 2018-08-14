@@ -1,0 +1,54 @@
+﻿// https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWIseXoKEUcDFAWN&categoryId=AWIseXoKEUcDFAWN&categoryType=CODE
+// 4050. 재관이의 대량 할인
+// qsort 사용법 (compare 필수)
+#if 00
+/*
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+*/
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 3벌 사면 가장 싼거 1개에 해당하는 값은 무료
+// 가장 많이 할인 받는 방법
+// 1. 할인을 받으려는 것은 가장 비싼것, 나머지는 값이 싼것으로
+// 2. N/3개 만큼 할인을 받을 수 있다. 
+int T, N;
+int C[100000];
+int ans;
+int print() {
+	for (int i = 0; i < N; i++) {
+		printf("%d ", C[i]);
+	}
+}
+int solve() {
+	for (int i = 0; i < N; i++) {
+		if (i % 3 == 2) continue;
+		ans += C[i];
+		//printf("%d\n", ans);
+	}
+	return ans;
+}
+// 오름차순
+int compare_ascending(int* a, int* b) {
+	return (*a > *b) ? 1 : (*a < *b) ? -1 : 0;
+}
+// 내림차순
+int compare_descending(int* a, int* b) {
+	return (*a > *b) ? -1 : (*a < *b) ? 1 : 0;
+}
+int main() {
+	scanf("%d", &T);
+	for (int t = 1; t <= T; t++) {
+		scanf("%d", &N);
+		memset(C, 0, sizeof(C));
+		ans = 0;
+		for (int i = 0; i < N; i++) scanf("%d", &C[i]);
+		qsort(C, sizeof(C) / sizeof(int), sizeof(int), compare_descending);
+		printf("#%d %d\n", t, solve());
+	}
+	return 0;
+}
+#endif

@@ -1,0 +1,86 @@
+﻿// https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AWIsY84KEPMDFAWN&categoryId=AWIsY84KEPMDFAWN&categoryType=CODE
+// 4047. 영준이의 카드 카운팅
+// 버퍼 비우는 법
+// getchar(); 또는 scanf(" %c", &character);
+// scanf()의 경우는 1회 처리할 경우 무조건 \n를 포함한다.
+// \n 없이 받는 경우는 없다.
+#if 00
+#include <stdio.h>
+#include <string.h>
+
+int T, t;
+// 0 + 1-13
+int S[13+1], D[13+1], H[13+1], C[13+1];
+
+int isExist(int* a, int num) {
+	if (a[num] == t) return 0;
+	a[num] = t;
+	return 1;
+}
+int input() {
+	char str[1000 * (1 + 2)];
+	char s;
+	int num, i=0;
+	int str_len;
+	scanf("%s", &str);
+	str_len = strlen(str);
+	while(i < str_len){
+		s = str[i];
+		num = (str[i + 1]-'0') * 10 + str[i + 2]-'0';
+		i = i + 3;
+		switch (s) {
+		case 'S': if (!isExist(S, num)) return 0;
+			break;
+		case 'D': if (!isExist(D, num)) return 0;
+			break;
+		case 'H': if (!isExist(H, num)) return 0;
+			break;
+		case 'C': if (!isExist(C, num)) return 0;
+			break;
+		}
+	}
+
+	return 1;
+}
+/*
+int input() {
+	char s;
+	int num;
+	while (1) {
+		scanf("%1c%2d", &s, &num);
+		if (s == '\0') return 1;
+		switch (s) {
+		case 'S': if (!isExist(S, num)) return 0;
+			break;
+		case 'D': if (!isExist(D, num)) return 0;
+			break;
+		case 'H': if (!isExist(H, num)) return 0;
+			break;
+		case 'C': if (!isExist(C, num)) return 0;
+			break;
+		}
+	}
+	return 1;
+}
+*/
+int solve() {
+ 	int s=0, d=0, h=0, c=0;
+	for (int i = 1; i <= 13; i++) {
+		if (S[i]==t) s++;
+		if (D[i]==t) d++;
+		if (H[i]==t) h++;
+		if (C[i]==t) c++;
+	}
+	printf("#%d %d %d %d %d\n", t, 13-s, 13-d, 13-h, 13-c);
+}
+int main() {
+	scanf("%d", &T);
+	for (t = 1; t <= T; t++) {
+		
+		if (input()) solve();
+		else printf("#%d ERROR\n", t);
+	}
+	return 0;
+}
+
+#endif

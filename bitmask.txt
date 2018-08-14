@@ -1,0 +1,193 @@
+﻿// https://www.swexpertacademy.com/main/code/problem/problemDetail.do?contestProbId=AV5V4A46AdIDFAWu&categoryId=AV5V4A46AdIDFAWu&categoryType=CODE
+//2115.[모의 SW 역량테스트] 벌꿀채취
+// bitmask 사용!!!!
+// A<<a & B : B의 이진수 자릿수가 a자리보다 작을 때, 무조건 1이상 출력 
+#if 00
+#include <stdio.h>
+int main() {
+
+	int a=7, b=8;
+
+	printf("%d & %d = %d\n", a, b, a&b);
+	return 0;
+}
+#endif
+// 복습 필수!!!!!!
+#if 00
+#include <stdio.h>
+
+int ans;
+int first, second;
+int T, t, N, M, C;
+int a[11][11];
+int state[11][11];
+
+
+int solve(int y, int x) {
+	int max = 0;
+	// 만약 M == 3이면 이진법으로 1 ~ 111까지 진행
+	// 1, 10, 11, 100, 101, 110, 111 전부 실행
+
+	for (int i = 0; i < (1 << M); i++) {
+		int v = 0, sqv = 0;
+		for (int j = 0; j < M; j++) {
+			// i의 값 중에 1이 있는 자릿수에서만 if문 실행
+
+			// 예를 들어 i = 101이면,
+			// j = 0 일때 첫번째 벌통 사용
+			// j = 1 일때 2번째 벌통 사용 안함
+			// j = 2 일때 3번째 벌통 사용
+
+			// 예를 들어 i = 10이면
+			// j = 1 일때 2번째 벌통만 사용함.
+			if ((1 << j) & i) {
+				v += a[y][x + j];
+				sqv += a[y][x + j] * a[y][x + j];
+			}
+		}
+		// 어느정도의 중복이 발생하는 방법.
+		if (v <= C) {
+			max = (max < sqv) ? sqv : max;
+		}
+	}
+	// printf("%d %d // %d\n", x, y, max);
+	return max;
+}
+void debug(int(*aa)[11]) {
+
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			printf("%d ", aa[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+
+int main() {
+	//freopen("sample_input.txt", "rb", stdin);
+
+	scanf("%d", &T);
+	for (t = 1; t <= T; t++) {
+		scanf("%d %d %d", &N, &M, &C);
+		first = 0; second = 0;
+		ans = 0;
+		for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+			scanf("%d", &a[y][x]);
+		}
+
+		for (int y = 0; y < N; y++) {
+			for (int x = 0; x + M - 1 < N; x++) {
+				// printf("FIRST \n");
+				int tmp = solve(y, x);
+				int first = 0, second = 0;
+				first = (first > tmp) ? first : tmp;
+
+				for (int y2 = y; y2 < N; y2++) {
+					for (int x2 = 0; x2 + M - 1 < N; x2++) {
+						if ((y2 == y) && (x2 < x + M)) break;	// 같은 줄일때만 추가조건
+						// printf("SECOND \n");
+						int tmp2 = solve(y2, x2);
+						second = (second > tmp2) ? second : tmp2;
+					}
+				}
+				int tmp3 = first + second;
+				ans = (ans > tmp3) ? ans : tmp3;
+			}
+		}
+		printf("#%d %d\n", t, ans);
+	}
+
+	return 0;
+}
+
+#endif
+
+#if 00
+#include <stdio.h>
+int ans;
+int first, second;
+int T, t, N, M, C;
+int fx, fy, sx, sy;
+int a[11][11];
+int a2[11][11];
+int state[11][11];
+void debug(int (*aa)[11]) {
+	
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			printf("%d ", aa[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+void solve() {
+	int tmp, tmp2;
+
+	// find first
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x+M-1 < N; x++) {
+			tmp = 0; tmp2 = 0;
+			for (int k = 0; k < M; k++) {
+				tmp += a[y][x + k];
+				tmp2 += a2[y][x + k];
+			}
+
+			if (tmp <= C) {
+				if (tmp2 > first) {
+					first = tmp2;
+					for (int k = 0; k < M; k++) state[fy][fx + k] = 0;
+					fx = x; fy = y;
+					for (int k = 0; k < M; k++) state[y][x + k] = t;		
+				}
+			}
+		}
+	}
+
+
+	// find second
+	for (int y = 0; y < N; y++) {
+		for (int x = 0; x + M -1< N; x++) {
+			tmp = 0; tmp2 = 0;
+			//printf("%d %d\n", x, y);
+			//debug(state);
+			if (state[y][x] == t) continue;
+			for (int k = 0; k < M; k++) {
+				tmp += a[y][x + k];
+				tmp2 += a2[y][x + k];
+			}
+			
+			if (tmp <= C) {
+				if (tmp2 > second) {
+					sx = x; sy = y;
+					second = tmp2;
+				}
+			}
+		}
+	}
+	//printf("(%d %d) (%d %d) \n", fx, fy, sx, sy);
+}
+
+
+
+int main() {
+	freopen("sample_input.txt", "rb", stdin);
+
+	scanf("%d", &T);
+	for (t = 1; t <= T; t++) {
+		scanf("%d %d %d", &N, &M, &C);
+		first = 0; second = 0;
+		for (int y = 0; y < N; y++) for (int x = 0; x < N; x++) {
+			scanf("%d", &a[y][x]);
+			a2[y][x] = a[y][x] * a[y][x];
+		}
+		solve();
+		printf("#%d %d\n", t, first+second);
+	}
+	
+	return 0;
+}
+
+#endif
+

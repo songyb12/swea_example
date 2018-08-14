@@ -1,0 +1,47 @@
+// 빌어먹을 순열 알고리즘
+#include <cstdio>
+#include <iostream>
+using namespace std;
+
+int N;
+int min;
+int amx;
+int a[10];
+void print() {
+	for (int i = 0; i < N; i++) {
+		printf("%d ", a[i]);
+	}
+	printf("\n");
+}
+void swap(int n, int m) {
+	int tmp;
+	tmp = a[n];
+	a[n] = a[m];
+	a[m] = tmp;
+}
+
+// arr : 배열
+// depth : 트리구조에서 어떤 깊이에서 교환중인지. 0부터 시작
+// n : 총 배열안에 들어있는 숫자를 의미. 고정값
+// k : 몇개를 뽑아내서 순열을 만들 것인지. 모두 사용하므로 n과 같다.
+void perm(int* arr, int depth, int n, int k) {
+	if (depth == k) {
+		print();
+		return;
+	}
+	for (int i = depth; i < n; i++) {
+		swap(i, depth);
+		perm(a, depth + 1, n, k);
+		swap(i, depth);
+	}
+}
+int main() {
+	scanf("%d", &N);
+	for (int i = 0; i < N; i++) {
+		scanf("%d", &a[i]);
+	}
+	perm(a, 0, N, N);
+	return 0;
+}
+
+#endif

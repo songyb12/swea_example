@@ -1,0 +1,653 @@
+﻿// 스마일게이트 파도 센서
+
+#if 00
+#include <iostream>
+#define abs(x, y)	(x>y ? x-y : y-x)
+class Wave {
+private:
+	int x, y, r;
+public:
+	int* get_pos() {
+		int res[2];
+		res[0] = x, res[1] = y;
+		return res;
+	}
+	Wave() {
+		x = 0, y = 0, r = 0;
+	}
+	Wave(int _x, int _y, int _r) {
+		x = _x, y = _y, r = _r;
+	}
+};
+
+class Sensor {
+private:
+	int x, y;
+	int dis;
+public:
+	Sensor() {
+		x = 0; y = 0; dis = 0x7fffffff;
+	}
+	Sensor(int nx, int ny) {
+		x = nx;
+		y = ny; dis = 0x7fffffff;
+	}
+	void get_pos() {
+		printf("%d %d %d\n", x, y, dis);
+	}
+	int get_distance() {
+		return dis;
+	}
+	int set_distance(Wave wave) {
+		int nx = wave.get_pos()[0];
+		int ny = wave.get_pos()[1];
+		dis = abs(x, nx)*abs(x, nx) + abs(y, ny)*abs(y, ny);
+		return dis;
+
+	}
+};
+int main() {
+	Wave wave;
+	Sensor sensor[5];
+	int x, y, r;
+	scanf("%d %d %d", &x, &y, &r);
+	wave = Wave(x, y, r);
+	for (int i = 0; i < 5; i++) {
+		scanf("%d %d", &x, &y);
+		sensor[i] = Sensor(x, y);
+		sensor[i].set_distance(wave);
+	}
+	int min = 0x7fffffff;
+	int ans = 0;
+	for (int i = 0; i < 5; i++) {
+		int dist = sensor[i].get_distance();
+		if (min > dist) {
+			ans = i; min = dist;
+		}
+	}
+	printf("%d\n", ans+1);
+	return 0;
+}
+
+#endif
+
+
+
+//쿠팡
+// 상품 등록하기 ( 자카드 지수 )
+#if 00
+/*
+Input : 에스트라 아토 베리어 보습 로션 200ml,아토팜 판테놀 로션 200ml,사노산 베이비 케어 로션 200ml,에스트라 아토 베리어 로션 200ml,일리윤 세라마이드 아토 집중크림 무향 100ml,에스트라 리제덤 RX 듀얼 썬크림 50ml
+Output : 2
+*/
+#include <stdio.h>
+#include <string.h>
+#define L 100
+char str[10000];
+char new_product_tok[L][L];
+char tok_arr[L][L];
+
+int new_product_tok_cnt = 0;
+
+void print(char(*str)[L]) {
+	int i = 0;
+	while (i != new_product_tok_cnt) {
+		printf("%s\n", str[i]);
+		i++;
+	}
+}
+int product_token(char* str) {
+	char *ptr = strtok(str, " ");
+	while (ptr != NULL) {
+		strcpy(new_product_tok[new_product_tok_cnt], ptr);
+		new_product_tok_cnt++;
+		ptr = strtok(NULL, " ");
+	}
+	//print(new_product_tok);
+	return new_product_tok_cnt;
+}
+
+float compare_token(char* str) {
+	
+	char all_tok[L][L];
+	char same_tok[L][L];
+	char tmp_tok[L][L];
+	int tmp_tok_cnt = 0;
+	int cnt = 1;
+
+	char *ptr = strtok(str, " ");
+	while (ptr != NULL) {
+		strcpy(tmp_tok[tmp_tok_cnt], ptr);
+		ptr = strtok(NULL, " ");
+		tmp_tok_cnt++;
+	}
+	
+	int all_p = new_product_tok_cnt, same_p=0;
+
+	for (int i = 0; i < new_product_tok_cnt; i++) {
+		strcpy(all_tok[i], new_product_tok[i]);
+	}
+
+	for (int j = 0; j < tmp_tok_cnt;j++) {
+		int i;
+		for (i = 0; i < new_product_tok_cnt; i++) {
+			if (strcmp(new_product_tok[i], tmp_tok[j]) == 0) break;
+		}
+
+		// 겹치지 않는 token
+		if (i == new_product_tok_cnt) {
+			strcpy(all_tok[all_p], tmp_tok[j]);
+			all_p++;
+			//printf("different : %s\n", tmp_tok[j]);
+		}
+		// 겹치는 token
+		else {
+			strcpy(same_tok[same_p], tmp_tok[j]);
+			same_p++;
+			//printf("same : %s\n", tmp_tok[j]);
+		}
+	}
+	//printf("%f = %d / %d\n", (float) same_p / all_p, same_p, all_p);
+	return ((float)same_p/all_p);
+}
+int main() {
+	int cnt = 1;
+	int product_cnt = 0;
+	int index = 0;
+
+	scanf("%[^\n]", str);
+	char *ptr = strtok(str, ",");
+
+	while (ptr != NULL) {	// strtok 함수의 수행 위치는 static 변수에 저장된다.
+		strcpy(tok_arr[product_cnt], ptr);
+		
+		ptr = strtok(NULL, ",");
+		product_cnt++;
+	}
+
+	product_token(tok_arr[0]);
+	float max = -1;
+	int res = 0;
+	for (int i = 1; i < product_cnt; i++) {
+		float value = compare_token(tok_arr[i]);
+		//printf("%f\n", value);
+		//printf("%s\n", tok_arr[i]);
+		if (value > max) {
+			max = value;
+			res = i - 1;
+		}
+	}
+	printf("%d\n", res);
+	
+	return 0;
+}
+
+#endif
+
+// 입력 받고, 시계방향 회전
+#if 00
+/*
+input :
+[[1,2,3,4],[5,6,7,8],[9,10,11,12],[13,14,15,16]]
+2
+output :
+[[9,5,1,2],[13,6,7,3],[14,10,11,4],[15,16,12,8]]
+*/
+#include <stdio.h>
+#define N 10000
+int a[N][N];
+int n; int K;
+char str[N * N];
+char tmp[N];
+void print();
+void process() {
+	// 좌상, 우상, 우하, 좌하
+	int tmp1 = a[0][0];
+	// 0번 열 위로
+	for (int i = 0; i + 1<n; i++) {
+		a[i][0] = a[i + 1][0];
+	}
+
+	// 가장 아래 행 왼쪽으로
+	for (int i = 0; i + 1<n; i++) {
+		a[n - 1][i] = a[n - 1][i + 1];
+	}
+
+	// 가장 오른쪽 행 아래로
+	for (int i = n-1; i>=1; i--) {
+		a[i][n-1] = a[i - 1][n-1];
+	}
+
+	// 0번 행 오른쪽으로
+	for (int i = n-1; i>=1; i--) {
+		a[0][i] = a[0][i - 1];
+	}
+
+	a[0][1] = tmp1;
+	
+	return;
+}
+
+void print() {
+	for(int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++)
+		{
+			printf("%d ", a[i][j]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+	return;
+}
+void output() {
+	printf("[");
+	for (int i = 0; i < n; i++) {
+		if(i!= 0) printf(",[");
+		else printf("[");
+		for (int j = 0; j < n; j++) {
+			if (j == n - 1) printf("%d]", a[i][j]);
+			else printf("%d,", a[i][j]);
+		}
+	}printf("]");
+}
+void input() {
+	int p = 0;
+	int col = 0;
+	int now = 0;
+	int cnt = 1;
+	int tmp_num = 0;
+	int num_cnt = 0;
+	scanf("%s", str);
+	while (str[p] != '\0') {
+
+		switch (now) {
+			// 초기상태
+		case 0:
+			if (str[p] == '[') {
+				now = 1;
+			}
+			break;
+			// 가장 바깥 열림
+		case 1:
+			if (str[p] == '[') {
+				now = 2;
+			}
+			else if (str[p] == ',') {
+				now = 1;
+			}
+			// 4번. 종료
+			else if (str[p] == ']')
+				now = 4;
+			break;
+			// 행 열림 ( 행 내부 처리 )
+		case 2:
+			// 값 처리
+			if (str[p] == ',') {
+
+				a[col][num_cnt] = tmp_num;
+				num_cnt++;
+				tmp_num = 0;
+				cnt++;
+				now = 2;
+			}
+			// 행 닫힘
+			else if (str[p] == ']') {
+				a[col][num_cnt] = tmp_num;
+				num_cnt = 0;
+				tmp_num = 0;
+				col++;
+				n = cnt;
+				cnt = 1;
+				now = 1;
+			}
+			// 숫자처리
+			else {
+				tmp_num *= 10;
+				tmp_num += str[p] - '0';
+				now = 2;
+			}
+			break;
+			// 가장 바깥 닫힘
+		case 4:
+			break;
+		default:
+			break;
+		}
+		p++;
+	}
+	scanf("%d", &K);
+
+
+}
+int main() {
+
+	input();
+	//print();
+	for(int k=0;k<K;k++)
+		process();
+	//print();
+	output();
+}
+
+#endif
+
+
+// 가장 가까운 좌표 찾기
+#if 00
+#include <iostream>
+#include <cstdio>
+#define dis(a, b)	((a>b) ? (a-b) : (b-a))
+using namespace std;
+int a[10];
+int N;
+int minv = 0xfffffff;
+int first = 0xfffffff, second=0xfffffff;
+void swap(int n, int m) {
+	int tmp;
+	tmp = a[n];
+	a[n] = a[m];
+	a[m] = tmp;
+}
+void print() {
+	for (int i = 0; i<N; i++) {
+		printf("%d ", a[i]);
+	}
+	printf("\n");
+}
+
+void process() {
+	//print();
+	int distance = dis(a[0], a[1]);
+	//printf("%d %d %d %d\n", minv, a[0], a[1], distance);
+	if (distance < minv) {
+		minv = distance;
+		if (a[0] > a[1]) first = a[1], second = a[0];
+		else first = a[0], second = a[1];
+	}
+	else if (distance == minv) {
+		if (first + second > a[0] + a[1]) {
+			if (a[0] > a[1]) first = a[1], second = a[0];
+			else first = a[0], second = a[1];
+		}
+	}
+	return;
+}
+void perm(int depth, int n, int k) {
+
+	if (depth == k) {
+		//print();
+		process();
+		return;
+	}
+
+	for (int i = depth; i<n; i++) {
+		swap(depth, i);
+		perm(depth + 1, n, k);
+		swap(depth, i);
+	}
+}
+
+void solve() {
+	perm(0, N, 2);
+	return;
+}
+
+int main() {
+	scanf("%d", &N);
+	for (int i = 0; i<N; i++) {
+		scanf("%d", &a[i]);
+	}
+	solve();
+	printf("%d %d\n", first, second);
+
+	return 0;
+}
+#endif
+
+
+
+
+//NHN
+// 펠린드롬
+#if 00
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+int N;
+
+int len(int a) {
+	int res = 0;
+	while (a) {
+		a = a / 10;
+		res++;
+	}
+	return res;
+}
+int pow(int a, int n) {
+	int res = 1;
+	for(int i=0;i<n;i++)
+		res *= 10;
+	return a*res;
+}
+int reverse(int a, int len) {
+	int res = 0;
+	int tmp;
+	while (len) {
+		tmp = a % 10;
+		res += pow(tmp, len - 1);
+		a /= 10;
+		len--;
+	}
+	return res;
+}
+bool check(int a) {
+	int length = len(a);
+	int rev_num = reverse(a, length);
+	int i;
+	for (i = 0; i<length / 2; i++) {
+		if (a % 10 != rev_num % 10) break;
+	}
+	if (i == length / 2) return true;
+	else return false;
+}
+int process(int depth, int num) {
+	if (depth == 3) return -1;
+	
+	int rev_num = reverse(num, len(num));
+	int new_num = num + rev_num;
+	if (new_num >= 10000) return -1; 
+	//printf("%d\n", new_num);
+	if (check(new_num) == false) {
+		process(depth+1, new_num);
+	}
+	else return new_num;
+}
+
+int main() {
+	int num;
+	scanf("%d", &num);
+	printf("%d\n", process(0, num));
+	return 0;
+}
+
+
+
+#endif
+
+// 빌어먹을 순열 알고리즘
+#if 00
+
+#include <cstdio>
+#include <iostream>
+using namespace std;
+
+int N;
+int min;
+int amx;
+int a[10];
+void print() {
+	for (int i = 0; i < N; i++) {
+		printf("%d ", a[i]);
+	}
+	printf("\n");
+}
+void swap(int n, int m) {
+	int tmp;
+	tmp = a[n];
+	a[n] = a[m];
+	a[m] = tmp;
+}
+
+// arr : 배열
+// depth : 트리구조에서 어떤 깊이에서 교환중인지. 0부터 시작
+// n : 총 배열안에 들어있는 숫자를 의미. 고정값
+// k : 몇개를 뽑아내서 순열을 만들 것인지. 모두 사용하므로 n과 같다.
+void perm(int* arr, int depth, int n, int k) {
+	if (depth == k) {
+		print();
+		return;
+	}
+	for (int i = depth; i < n; i++) {
+		swap(i, depth);
+		perm(a, depth + 1, n, k);
+		swap(i, depth);
+	}
+}
+int main() {
+	scanf("%d", &N);
+	for (int i = 0; i < N; i++) {
+		scanf("%d", &a[i]);
+	}
+	perm(a, 0, N, N);
+	return 0;
+}
+
+#endif
+
+#if 01
+// 64 비트 입출력
+#include <iostream>
+#include <cstdio>
+
+using namespace std;
+int N;
+long long unsigned int minv = 0xffffffffffffffff, maxv = 0;
+long long unsigned int a[10];
+void print();
+void solve();
+void input() {
+	scanf("%d", &N);
+	for (int i = 0; i<N; i++) {
+		scanf("%d", &a[i]);
+	}
+	return;
+}
+long long unsigned int ezpow(int a, int n) {
+	long long unsigned int res = 1;
+	for (int i = 0; i<n; i++)
+		res *= 10;
+	return res*a;
+}
+void swap(int n, int m) {
+	long long unsigned int tmp = 0;;
+	tmp = a[n];
+	a[n] = a[m];
+	a[m] = tmp;
+
+}
+void print() {
+	for (int i = 0; i<N; i++) {
+		printf("%d ", a[i]);
+	}
+	printf("\n");
+}
+
+void perm(int depth, int n, int k) {
+	if (depth == k) {
+		//print();
+		solve();
+		return;
+	}
+	for (int i = depth; i<k; i++) {
+		swap(i, depth);
+		perm(depth + 1, n, k);
+		swap(i, depth);
+	}
+}
+void solve() {
+	int tmp_n = N;
+	long long unsigned int tmp = 0;
+	int digit = 0;
+	while (tmp_n) {
+		if (a[tmp_n - 1] >= 10) {
+			tmp += ezpow(a[tmp_n - 1], digit);
+			tmp_n--;
+			digit = digit + 2;
+		}
+		else {
+			tmp += ezpow(a[tmp_n - 1], digit);
+			tmp_n--;
+			digit++;
+		}
+	}
+	if (tmp < minv) minv = tmp;
+	if (tmp > maxv) maxv = tmp;
+
+}
+int main() {
+	input();
+	perm(0, N, N);
+	printf("%llu %llu\n", minv, maxv);
+	printf("%llu\n", minv + maxv);
+	return 0;
+}
+
+#endif
+
+
+#if 00
+
+#include <iostream>
+#define TEST 5
+using namespace std;
+
+int main() {
+#if TEST==1
+	cout << "Hello World" << endl;
+#endif
+#if TEST==2
+	// Visual Studio의 경우 32bit와 64bit의 데이터 크기에 차이가 없다.
+	// G++의 경우 wchar_t, long, long double 형이 각각 4 8 16 Byte이다. (1 Byte = 8bit)
+	cout << sizeof(bool) << endl;
+	cout << sizeof(wchar_t) << endl;
+	cout << sizeof(short) << endl;
+	cout << sizeof(int) << endl;
+	cout << sizeof(long) << endl;	
+	cout << sizeof(double long) << endl;
+#endif
+#if TEST==3
+	// Console In, Out
+	int number;
+	float mumber;
+	char letter;
+	cout << " 정수 문자 실수 순서 입력" << endl;
+	cin >> number >> letter >> mumber;
+	if (cin.fail() && !cin.bad()) {
+		cin.clear(); cin.ignore();
+	}
+	cout << number << ' ' << letter << ' ' << mumber << endl;
+#endif
+	// 이차 배열은 반복문으로 선언해야함.
+#if TEST==4
+	char (*a)[10] = new (char[10]);
+
+	cout << sizeof(a) << endl;
+#endif
+
+
+
+	return 0;
+}
+
+#endif
