@@ -1,0 +1,41 @@
+﻿#include "stdafx.h"
+#include <cstdio>
+
+// heap을 이용한 permutation 복습
+// 0. n 개 중에 k를 고르는 방법.
+// 0. depth == k가 되면 종료.
+
+#define MAX	100
+int arr[MAX];
+
+// Swap with calling by reference.
+// 주소값은 그대로 두고 주소값이 가리키는 내용을 바꾼다.
+// 주소값을 바꾸는 것이 아님.
+void swap(int* a, int* b) {
+	int tmp;
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+
+void perm(int* array, int n, int k, int depth) {
+	if (depth == k) {
+		// do something
+		for (int i = 0; i < k; i++) {
+			printf("%d ", array[i]);
+		}printf("\n");
+	}
+
+	for (int i = depth; i < n; i++) {
+		swap(&(array[i]), &(array[depth]));
+		perm(array, n, k, depth + 1);
+		swap(&(array[i]), &(array[depth]));
+	}
+}
+
+int main()
+{
+	for (int i = 0; i < MAX; i++) arr[i] = i;
+	perm(arr, 5, 3, 0);
+    return 0;
+}

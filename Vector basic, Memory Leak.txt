@@ -1,0 +1,131 @@
+#include <string>
+#include <vector>
+#include <iostream>
+
+
+#include <crtdbg.h> 
+using namespace std;
+int main() {
+	//_crtBreakAlloc = 278;		278번 블록에서 Break Point
+
+	vector<int> intVec;
+
+	intVec.push_back(21);
+	intVec.push_back(32);
+	intVec.push_back(1);
+	intVec.push_back(124);
+	intVec.push_back(49);
+	// (ex1) 멤버형식 size_type을 이용한 반복
+	printf("ex1-1) [intVec.at(i)] size_type: ");
+	for (vector<int>::size_type i = 0; i < intVec.size(); i++) {
+		printf("%d ", intVec.at(i));
+	}
+	cout << endl;
+	cout << "ex1-1) [intVec[i] size_type:" << " ";
+	for (vector<int>::size_type i = 0; i < intVec.size(); i++) {
+		cout << intVec[i] << " ";
+	}
+	cout << endl << endl;
+
+	// (ex2) int i 를 이용한 반복
+	cout << "ex2-1) [intVec.at(i)] int : ";
+	for (int i = 0; i<intVec.size(); i++) {
+		cout << intVec.at(i) << " ";
+	}
+	cout << endl;
+	cout << "ex2-2) [ intVec[i] ] int : ";
+	for (int i = 0; i<intVec.size(); i++) {
+		cout << intVec[i] << " ";
+	}
+	cout << endl << endl;
+ 
+	// (ex3) 반복자 iterator를 이용한 반복. 
+	cout << "ex3) [*iter] iterator : ";
+	vector<int>::iterator iter1;
+	for (iter1 = intVec.begin(); iter1 != intVec.end(); iter1++) {
+		cout << *iter1 << " ";
+	}
+
+	cout << endl << endl;
+
+	// 벡터 int형에서 double형으로 데이터 전환
+	cout << " * 벡터 int형에서 double형으로 데이터 전환 " << endl;
+	vector<double> doubleVec(intVec.begin(), intVec.end());
+	cout << typeid(doubleVec).name() << endl;
+	vector<double>::iterator double_iter;
+	for (double_iter = doubleVec.begin(); double_iter != doubleVec.end(); double_iter++) {
+		cout << *double_iter << " ";
+	}
+	cout << endl << endl;
+	
+	
+	// 벡터의 Size 0으로 만들기.
+	cout << " * 벡터의 Size 0으로 만들기. " << endl;
+	// v.clear();	// 1
+	intVec.erase(intVec.begin(), intVec.end()); // 2. 2번을 권장.
+	// 만약 vector에 포인터를 넣었을 경우, delete를 해줘야한다.
+	cout << "intVec의 Size / Capacity: " << intVec.size() << " / " << intVec.capacity() << endl << endl;
+
+
+	// Vector의 Capacity 0으로 만들기. (메모리 할당을 없도록) vector 자체를 없애진 못하는 듯.
+	cout << " * Vector의 Capacity 0으로 만들기. (메모리 할당을 없도록)" << endl;
+	vector<int>().swap(intVec);	// 방법 1. crtdbg에서 메모리 누수 뜬다고 한다.
+	intVec.~vector();	// 소멸자를 적용 시켜야 메모리 누수 발생하지 않는다.
+	doubleVec.vector<double>::~vector(); // 방법 2. 소멸자. 이 경우 다시 사용하려면 생성자를 다시 사용해야함.
+	// new (&doubleVec) vector<double>;
+	cout << "intVec과 doubleVec의 capacitiy : " << intVec.capacity() << " " << doubleVec.capacity() << endl << endl;
+
+	vector<string> v;
+
+	v.push_back("Art");
+	v.push_back("Birth");
+	v.push_back("Chicken");
+	v.push_back("Death");
+	v.push_back("Exciting");
+
+
+	// (ex4) v.front(), v.back() 
+	//printf("ex4) %u %u\n", v.front(), v.back()); 는 작동하지 않는다.
+	cout << "ex4)" << v.front() << " " << v.back() << endl;
+	cout << "v.front() : " << v.front() << endl;
+	cout << "v.end() : " << v.back() << endl;
+	cout << endl;
+
+	// (ex5) v.popback()
+	cout << "//ex5) v.popback()" << endl;
+
+	vector<string>::iterator iter2;
+	for (iter2 = v.begin(); iter2 != v.end(); iter2++) {
+		cout << *iter2 << " / ";
+	}
+	cout << endl;
+
+	v.pop_back();
+
+	for (iter2 = v.begin(); iter2 != v.end(); iter2++) {
+		cout << *iter2 << " / ";
+	}
+	cout << endl << endl;
+
+	// (ex6) v.erase(iter);
+	cout << "//ex6) v.erase(iter)" << endl;
+
+	for (iter2 = v.begin(); iter2 != v.end(); iter2++) {
+		if (*iter2 == "Chicken") {
+			v.erase(iter2);
+			break;
+		}
+	}
+	for (iter2 = v.begin(); iter2 != v.end(); iter2++) {
+		cout << *iter2 << " / ";
+	}
+
+	v.~vector();
+
+
+	_CrtDumpMemoryLeaks();
+
+	return 0;
+}
+
+
