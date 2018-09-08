@@ -1,0 +1,42 @@
+﻿#include <string>		// getline
+#include <iostream>		// cin, cout, cin의 getline
+#include <fstream>		// ifstream
+using namespace std;	// string
+
+int main()
+{
+	string str;
+
+	// scanf("%s", &str);	: 안됨
+	
+	// [1] cin
+	// 1) 처음 입력된 white space를 무시한다. (엔터, 탭, 띄어쓰기)
+	// 2) 개행문자를 저장하지 않는다.(\n)
+	// getline(cin, string 변수); 는 개행문자와 공백을 모두 저장한다.
+
+	while (1) {
+		cin >> str;	// \n는 입력받지 않는다. 버퍼에 남는다. 반복시 \n 무시한다.
+		cout << str << endl;
+		if (str == "q") break;
+	}
+
+	// [2]
+	str = cin.get();	// 문자 하나를 입력받는다.
+	cout << str << endl;
+
+	// [3] cstr 입력
+	char cstr[512];
+	cin.getline(cstr,20);	// 입력받은 문자열이 cstr에 20개만 입력. 공백포함.
+	cout << str << endl;
+
+	// [4] fstream 입력
+	ifstream inf("test.txt");
+	inf.getline(cstr, 512);		// buffersize 만큼 cstr에 값을 파일에서 읽어온다.
+	cout << str << endl;
+
+	// [5] <string>에 저장된 getline 함수
+	getline(inf, str);	// 파일 입출력
+	getline(cin, str);	// 표준 입출력
+	cout << str << endl;
+    return 0;
+}

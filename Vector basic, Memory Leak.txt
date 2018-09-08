@@ -44,7 +44,7 @@ int main() {
 	vector<int>::iterator iter1;
 	for (iter1 = intVec.begin(); iter1 != intVec.end(); iter1++) {
 		cout << *iter1 << " ";
-	}
+	}	// 반드시 != 로 해야한다. 정수형이 아니라서 <=는 안됨.
 
 	cout << endl << endl;
 

@@ -1,0 +1,97 @@
+﻿#include <iostream>
+#include <cstdio>
+#include <string>
+using namespace std;
+
+// [l-value와 R-value]
+// 전통적으로는 Left/RIght Value를 의미했다. E1 = E2.
+// l-vaule의 의미는 E1이 수정가능한 변수 이어야 한다는 것에서 기원했다.
+// R-value의 의미는 E2는 수식의 값이라는 것에서 기원했다.
+
+// [L-Value]
+// 수식(Expression) 이 끝나도 존재하는 값.
+// 선언되어서 메모리에 할당이 된 값.
+// 수식(Expression)에서 identity를 가지는 value.
+// 즉 메모리 공간을 가리키는 용어.
+// [R-Value]
+// 수식의 종료와 함께 사라지는 임시적인 값을 rvalue.
+// 선언되지 않아서 ROM 또는 레지스터에서 발생시켰다가 사라지는 값.(추측)
+// 수식(Expression)에서 identity를 가지지 않는 value.
+// C++로 들어가면서 Pure-rvalue와 eXpiring-value로 나뉘어진다.
+// 따라서 C++에서 모든 변수는 반드시 l-value, x-value, prvalue 중 하나이다.
+
+// [리터럴]
+// 값을 그대로 입력한 것을 의미한다.
+// 리터럴은 선언하지 않고 사용하였기에 rvalue이다.
+// 리터럴마다 기본적으로 붙는 자료형이 다르다.
+// (int) 123, (const char[4]) "cha", (char) 'a'.
+// string은 string str() { return "string";} 과 같은 식으로 리터럴을 사용할 수 있다.
+// string 리터럴은 non const이다.
+
+
+// & : l-value reference variable
+// 여기서 &는 value의 주소를 의미하는 것이 아니라,
+// C++에서 추가된 reference variable을 의미한다.
+// int& a = b; 와 같이 사용되며 a와 b는 사실상 같은 의미로 사용되며
+// 같은 메모리를 가리킨다. 일종의 alias 역할.
+
+// && : r-value reference variable (C++11에 추가)
+// 일반적으로 rvalue는 수식이 종료됨과 동시에 사라지지만,
+// int&&를 사용하게 될 경우, identity를 부여함과 동시에 xvalue이 된다.
+// lifetime이 늘어나며 사라지지 않는다.
+
+
+#define MAIN 1
+#define TEST 3
+#if MAIN == 0
+int main() {
+
+
+#if TEST == 1
+	int i = 1;
+	int &a = ++i;		// L-Value. i를 증가시킨 후 반환.
+	int &b = i++;		// R-Value. i를 증가시키지만, 증가되기 전의 값을 임시로 보관하여 반환.
+						// 즉, 사용되는 i는 임시로 존재하는 값이며, 수식이 끝나면 사라지게 된다.
+#endif
+#if TEST == 2
+	int i = 1;
+	const int &p = i;
+	p = 7;				// p는 L-Value이지만, const 떄문에 r-value를 저장할 수 없다.
+#endif
+#endif
+#if MAIN == 1
+string one("one");						// 스트링 선언.
+const string two("two");
+string three() { return "three"; }
+const string four() { return "four"; }	// 스트링 선언하지 않음.
+// char six()[4] { return "six"; }		// c문자열 선언하지 않고 사용 불가.
+
+static int s_five = 0;
+int& five() { return s_five; }
+int main() {
+		// L-Value나 R-Value 모두 Const나 Non-Const의 속성을 가질 수 있다.
+	one;     // 변경 가능한(non-const)lvalue	// one이라는 이름을 갖는 (string)"one"
+	two;     // 변경 불가능한(const) lvalue		// two라는 이름을 갖는 (const string)"three"
+	three(); // 변경 가능한(non-const) rvalue	// == (string) "three"
+	four();  // 변경 불가능한(const) rvalue		// == (const string) "four"
+	'a';	// 리터럴 문자열. 변경 불가능한 rvalue. // (const char[4])
+
+
+	// int & 사용법.
+	int& f = five(); // 변경 가능한(non-const)lvalue
+	f = 5;
+	cout << f << " equals " << s_five << endl;
+
+	
+	string&& _three = three();	// prvalue(pure-)을 xvalue(eXpiring-) 변환하면서 lifetime이 늘어난다.
+
+	three()[2] = 'a';	// 변경가능한 rvalue 확인. 하지만 변경후에 사용할 방법이 없다.
+	// string&& _four = four();	// 에러. const rvalue는 
+	_three[3] = 'a';
+
+	cout << &_three << endl; // 리터럴 문자열이 사라지지 않고, 값이 변경되어 출력 
+
+	//(string)"abcd"[3] = 'a';
+
+}
+#endif
