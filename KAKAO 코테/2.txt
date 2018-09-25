@@ -1,0 +1,55 @@
+﻿#include <string>
+#include <vector>
+#include <algorithm>
+#include <iostream>
+
+using namespace std;
+// 
+vector<int> solution(int N, vector<int> stages) {
+	vector<int> answer;
+
+	int user_size = stages.capacity();
+	vector<double> clear;
+	vector<double> trynum;
+	vector<double> clear_per;
+	clear.assign(N, 0);
+	trynum.assign(N, 0);
+	clear_per.assign(N, 0);
+	
+	for (int i = 0; i < user_size; i++) {
+		
+		for (int j = 1; j < stages[i]; j++) {
+			clear[j-1]++;
+		}
+		for (int j = 1; j <= stages[i]; j++) {
+			if (j-1 == N) continue;
+			trynum[j-1]++;
+		}
+	}
+
+	for (int i = 0; i < N; i++) {
+		// cout <<  clear[i] << " / " << trynum[i] <<endl;
+		if (trynum[i] != 0) {
+			clear_per[i] = clear[i] / trynum[i];
+			
+		}
+		else clear_per[i] = 1;
+		clear[i] = clear_per[i];
+		
+	}
+	sort(clear_per.begin(), clear_per.end());
+	for (int j = 0; j < clear_per.capacity(); j++) {
+		//cout << clear_per[j] << " " << clear[j] << endl;
+	}
+	for (int i = 0; i < N; i++) {
+		for (int j = 0; j < N; j++) {
+			if (clear_per[i] == clear[j]) {
+				answer.push_back(j+1);
+				clear[j] = -1;
+				break;
+			}
+		}
+	}
+
+	return answer;
+}

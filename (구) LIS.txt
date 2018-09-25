@@ -1,0 +1,90 @@
+﻿// 2631. 줄세우기 문제와는 다른 문제 (LIS 문제)
+#if 00
+#include <stdio.h>
+#include <string.h>
+// 100000*100000 = 100 0000 0000 (100억) > 1초(1억)
+// lower bound 방법을 통한 nlogn 복잡도의 LIS 구현
+// lower bound : 이분탐색의 일종.
+//				찾고자 하는 값 이상이 처음 나타나는 위치를 찾는 것
+//				원소들 중 x 보다 크거나 같은 값이 처음 나타는 곳을 찾는 것
+
+#define max(x,y)	(x>y?x:y)
+int tc, T, N;
+int a[100000], t[100000], r[100000];
+int len;
+// O(logN)의 복잡도
+int lower_bound(int a[], int target, int size) {
+	int mid, start, end;
+	start = 0; end = size - 1;
+	while (end > start) {	// end값이 start보다 같거나 작아지면, 종료.
+		mid = (start + end) / 2;
+		if (a[mid] >= target) end = mid;
+		else start = mid + 1;
+	}
+	return end;
+}
+void print(int a[]) {
+	for (int i = 0; i < N; i++) {
+		printf("%d ", a[i]);
+	}
+	printf("\n");
+}
+int solve() {
+	int res = 0;
+	//memset(t, 0, sizeof(int)*N);
+	t[0] = a[0];
+	len = 0;
+	for (int i = 1; i < N; i++) {
+		if (t[len] < a[i]) {
+			t[++len] = a[i];
+			continue;
+		}
+		//print(t);
+		t[lower_bound(t, a[i], len+1)] = a[i];
+	}
+
+	return N - len-1;
+}
+int main() {
+	scanf("%d", &T);
+	for (tc = 1; tc <= T; tc++) {
+		scanf("%d", &N);
+		for (int n = 0; n < N; n++) scanf("%d", &a[n]);
+		printf("#%d %d\n", tc, solve());
+	}
+	return 0;
+}
+#endif
+
+
+// O(n^2)로는 시간 초과가 뜬다.
+#if 00
+#include <stdio.h>
+#define max(x,y)	(x>y?x:y)
+int t, T, N, a[100000];
+int d[100000];
+
+int solve() {
+	int res = 0;
+	for (int i = 0; i < N; i++) {
+		d[i] = 1;
+		for (int j = 0; j < i; j++) {
+			if (a[j] < a[i] && d[i] == d[j]) {
+				d[i] = d[j] + 1;
+				res = max(d[i], res);
+			}
+		}
+	}
+	return N-res;
+}
+int main() {
+	scanf("%d", &T);
+	for (t = 1; t <= T; t++) {
+		scanf("%d", &N);
+		for (int n = 0; n < N; n++) scanf("%d", &a[n]);
+		printf("#%d %d\n", t, solve());
+	}
+	return 0;
+}
+#endif
+

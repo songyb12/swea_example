@@ -1,0 +1,63 @@
+﻿
+// 5658. [모의 SW 역량테스트] 보물상자 비밀번호
+// sort
+#if 01
+#include <cstdio>
+#include <algorithm>
+using namespace std;
+
+#define loop1(i, x) for(int i=0;i<x;i++)
+#define comp(x,y)	(((x)>(y))? true : false)
+int T, N, K;
+int cq[28];
+int nums[28];
+//	int stats[0xfffffff]; 메모리 초과
+
+bool compare(int a, int b) {
+	return comp(a, b);
+}
+int solve() {
+	int len=0;
+	// loop1(i, 0xfffffff) stats[i] = false;
+	loop1(n, N) {
+		int cnt = N / 4;
+		int tmp = 0;
+		for (int i = n; i < n + N / 4;i++) {
+			int ii;
+			if (i >= N) ii = i-N;
+			else ii = i;
+			tmp += cq[ii] << ((cnt--) - 1) * 4;	
+		}
+		
+		// if (stats[tmp]) continue;
+		// stats[tmp] = true;
+		bool flag = false;
+		loop1(i, len) {
+			if (nums[i] == tmp) flag = true;
+		}
+		if (flag) continue;
+		nums[len++] = tmp;
+	} 
+	sort(nums, nums + len, greater<int>());
+	return nums[K-1];
+}
+int main() {
+	scanf("%d", &T);
+	loop1(tc, T) {
+		scanf("%d %d", &N, &K);
+		loop1(n, N) {
+			char tmp;
+			scanf(" ");
+			scanf("%c", &tmp);
+			if (tmp >= 'A' && tmp <= 'Z') cq[n] = tmp - 'A' + 10;
+			else if(tmp >= '0' && tmp <= '9') cq[n] = tmp - '0';
+		}
+		//loop1(n, N) printf("%d ", cq[n]);
+
+		printf("#%d %d\n", tc + 1, solve());
+	}
+	return 0;
+}
+
+#endif
+

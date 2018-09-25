@@ -1,0 +1,92 @@
+﻿#include <string>
+#include <vector>
+#include <sstream>
+#include <iostream>
+using namespace std;
+
+class user{
+    public:
+        string inID;
+        string exID;
+    void inIDc(string n){
+        this->inID = n;
+    }
+    void exIDc(string n){
+        this->exID = n;
+    }
+};
+
+string print(string inout, string ID){
+    string res;
+    if(inout == "Enter")
+        res = ID+"님이 들어왔습니다.";
+    else if(inout == "Leave")
+        res = ID +"님이 나갔습니다.";
+    return res;
+}
+
+vector<string> solution(vector<string> record) {
+	vector<string> answer;
+	vector<user> users;
+	int user_cnt = 0;
+	int record_cnt = record.capacity();
+	for (int i = 0; i<record_cnt; i++) {
+		string w;
+		vector<string> word;
+		bool exist_flag = false;
+        bool same_flag = false;
+		int exist_num = -1;
+    
+		for (stringstream sts(record[i]); (sts >> w);) {
+			word.push_back(w);
+		}
+		for (int j = 0; j<record_cnt; j++) {
+			if (user_cnt == 0) break;
+
+			for (int k = 0; k<user_cnt; k++) {
+				if (users[k].inID == word[1]) {// 존재하는 경우
+                    if (users[k].exID == word[2]) {
+						same_flag = true;
+						break;
+					}
+					exist_flag = true;
+					exist_num = k;
+					break;
+				}
+			}
+		}
+    if (!same_flag) {
+		if (exist_flag) {
+			if (word[0] == "Leave") continue;
+			users[exist_num].exIDc(word[2]);
+		}
+		else {
+			user_cnt = user_cnt + 1;
+			user tmp_user;
+			tmp_user.inIDc(word[1]);
+			if (word[0] != "Leave")
+				tmp_user.exIDc(word[2]);
+			users.push_back(tmp_user);
+		}
+    }
+
+	}
+    for (int i = 0; i<record_cnt; i++) {
+		string w;
+		vector<string> word;
+		string tmp = record[i];
+
+		for (stringstream sts(tmp); (sts >> w);) {  /// 문자열 record로 만들어진 문자열 스트림 sts생성
+													/// 문자열 스트림 sts를 이용하여 한 단어씩 w에 입력
+													/// sts에 남은 단어가 없다면 NULL 반환
+			word.push_back(w);           /// 단어 w를 word에 추가
+		}
+        string ID = "";
+        for(int i=0;i<user_cnt;i++){
+            if(users[i].inID == word[1])
+                ID = users[i].exID;
+        }
+        if(word[0] != "Change") answer.push_back(print(word[0], ID));
+    }
+	return answer;
+}

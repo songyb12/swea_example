@@ -1,0 +1,73 @@
+﻿[C]
+1. strtok - 문자열 char s1[30]
+#include <stdio.h>
+#include <string.h>		// strtok
+
+int main(){
+	char s1[30] = "This is Test Sentence to tokenize.";
+	char *ptr = str(s1, " ");	// " "를 기준으로 문자열을 자르고, 포인터를 반환
+				// ptr은 s1의 처음을 가리키고 있고,
+				//  " " 부분에 NULL을 넣었다.
+// 문자열을 새로 생성새허 반환하는 것이 아니라 원본 문자열의 내용을 바꾼다.
+	while(ptr != NULL){
+		printf("%s\n", ptr);
+		ptr = strtok(NULL, " ");	// NULL을 넣었을 때 직전 strtok 함수에서 처리했던 문자열에서 잘린 문자열 만큼 다음 문자로 이동한 뒤 다음 문자열을 자른다.
+		//ptr = strtok(ptr, " "); 	// 의 경우는 This This This 만 반복
+
+
+	}
+}
+
+2. strtok - 문자열 리터럴을 가리키는 문자열 포인터 char *s2
+#include <stdio.h>
+#include <string.h>
+
+int main(){
+/*
+	char *s2 = "This is Test Sentence to tokenize.";
+	char *ptr = str(s2, " "); 	// 실행 에러 발생
+*/
+	char *s2 = malloc(sizeof(char) * 30);
+	strcpy(s2, "This is Test Sentence to tokenize.");
+	char *ptr = str(s2, " ");
+
+	while (ptr != NULL){
+		printf("%s\n", ptr);
+		ptr = strtok(NULL, " ");
+	}
+	free(s1);    // 동적 메모리 해제
+}
+
+3. 띄어쓰기가 아닌 다른 것을 기준으로 문자열을 자를 때.
+    char s1[30] = "2015-06-10T15:32:19";
+
+    char *ptr = strtok(s1, "-T:");    // -, T, 콜론을 기준으로 문자열을 자름
+                                         // 포인터 반환
+    while (ptr != NULL)               // 자른 문자열이 나오지 않을 때까지 반복
+    {
+        printf("%s\n", ptr);          // 자른 문자열 출력
+        ptr = strtok(NULL, "-T:");    // 다음 문자열을 잘라서 포인터를 반환
+    }
+
+    return 0;
+
+
+[C++]
+1. sstream(stringstream)을 이용
+
+#include <string>
+#include <vector>
+#include <sstream>
+#include <iostream>
+using namespace std;
+vector<string> solution(vector<string> record) {
+	vector<user> users;
+	int record_cnt = record.capacity();
+	for (int i = 0; i<record_cnt; i++) {
+		string w;
+		vector<string> word;  
+		for (stringstream sts(record[i]); (sts >> w);) {
+			word.push_back(w);	// word vector에 하나씩 넣음
+		}
+
+}
